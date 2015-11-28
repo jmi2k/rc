@@ -4,6 +4,8 @@
 
 #include <errno.h>
 #include <signal.h>
+#include <termios.h>
+#include <unistd.h>
 
 #include "wait.h"
 
@@ -19,6 +21,7 @@ extern void exec(List *s, bool parent) {
 	builtin_t *b;
 	char *path = NULL;
 	bool didfork, returning, saw_exec, saw_builtin;
+	struct termios t;
 	av = list2array(s, dashex);
 	saw_builtin = saw_exec = FALSE;
 	do {
@@ -68,6 +71,8 @@ extern void exec(List *s, bool parent) {
 	   must fork no matter what.
 	 */
 	if ((parent && (b == NULL || redirq != NULL)) || outstanding_cmdarg()) {
+		if (interactive)
+			tcgetattr(0, &t);
 		pid = rc_fork();
 		didfork = TRUE;
 	} else {
@@ -111,6 +116,8 @@ extern void exec(List *s, bool parent) {
 		redirq = NULL;
 		rc_wait4(pid, &stat, TRUE);
 		setstatus(-1, stat);
+		if (interactive && WIFSIGNALED(stat))
+			tcsetattr(0, TCSANOW, &t);
 		/*
 		   There is a very good reason for having this weird
 		   nl_on_intr variable: when rc and its child both
