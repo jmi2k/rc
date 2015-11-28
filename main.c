@@ -114,6 +114,7 @@ quitopts:
 			close(fd);
 		}
 	}
+	applylocale();
 
 	if (dashsee[0] != NULL || dashess) {	/* input from  -c or -s? */
 		if (*argv != NULL)

@@ -381,6 +381,7 @@ extern int starstrcmp(const void *, const void *);
 extern void pr_error(char *, int);
 extern void panic(char *);
 extern void uerror(char *);
+extern void applylocale(void);
 
 /* wait.c */
 extern pid_t rc_fork(void);

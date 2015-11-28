@@ -3,6 +3,7 @@
 #include "rc.h"
 
 #include <errno.h>
+#include <locale.h>
 #include <setjmp.h>
 
 #include "jbwrap.h"
@@ -79,3 +80,19 @@ extern int mvfd(int i, int j) {
 	}
 	return 0;
 }
+
+
+/* set locale from appropriate variables */
+
+extern void applylocale() {
+	char *lvar[3] = { "LC_ALL", "LC_CTYPE", "LANG" };
+	size_t i;
+	for (i = 0; i < arraysize(lvar); i++) {
+		List *loc = varlookup(lvar[i]);
+		if (loc) {
+			setlocale(LC_CTYPE, loc->w);
+			break;
+		}
+	}
+}
+
