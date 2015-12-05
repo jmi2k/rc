@@ -3,6 +3,9 @@
 #include "rc.h"
 #include "stat.h"
 
+#include <pwd.h>
+#include <sys/types.h>
+
 /* Lifted from autoconf documentation.*/
 #if HAVE_DIRENT_H
 # include <dirent.h>
@@ -25,6 +28,58 @@ static List *dmatch(char *, char *, char *);
 static List *doglob(char *, char *);
 static List *lglob(List *, char *, char *, size_t);
 static List *sort(List *);
+
+static List *expandtilde(List *s) {
+	List *top, *r, *var;
+	char *home;
+	size_t i, j, hsize, psize;
+	bool tilde;
+	for (r = s, tilde = FALSE; r != NULL; r = r->n)
+		if (r->m != NULL && r->m[0] && r->w[0] == '~')
+			tilde = TRUE;
+	if (!tilde)
+		return s;
+	for (top = NULL; s != NULL; s = s->n) {
+		if (top == NULL)
+			top = r = nnew(List);
+		else
+			r = r->n = nnew(List);
+		r->w = s->w;
+		r->m = s->m;
+		if (s->m == NULL || !s->m[0] || s->w[0] != '~')
+			continue;
+		for (i = 1; s->w[i] != '/' && s->w[i] != '\0'; i++);
+		home = NULL;
+		if (i == 1) {
+			if ((var = varlookup("HOME")) != NULL)
+				home = var->w;
+		} else {
+			char c = s->w[i];
+			struct passwd *pw;
+			s->w[i] = '\0';
+			if ((pw = getpwnam(s->w + 1)) != NULL)
+				home = pw->pw_dir;
+			s->w[i] = c;
+		}
+		if (home == NULL || (hsize = strlen(home)) == 0)
+			continue;
+		psize = strlen(s->w + i) + 1;
+		r->w = nalloc(psize + hsize);
+		memcpy(r->w, home, hsize);
+		memcpy(r->w + hsize, s->w + i, psize);
+		for (j = i; s->w[j] != '\0'; j++)
+			if (s->m[j])
+				break;
+		if (s->w[j] != '\0') {
+			r->m = nalloc(psize + hsize);
+			memset(r->m, 0, hsize);
+			memcpy(r->m + hsize, s->m + i, psize);
+		} else
+			r->m = NULL;
+	}
+	r->n = NULL;
+	return top;
+}
 
 /*
    Matches a list of words s against a list of patterns p. Returns true iff
@@ -58,6 +113,7 @@ extern bool lmatch(List *s, List *p) {
 extern List *glob(List *s) {
 	List *top, *r;
 	bool meta;
+	s = expandtilde(s);
 	for (r = s, meta = FALSE; r != NULL; r = r->n)
 		if (r->m != NULL)
 			meta = TRUE;

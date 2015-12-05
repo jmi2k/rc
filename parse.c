@@ -948,7 +948,7 @@ case 52:
 break;
 case 54:
 #line 127 "parse.y"
-{ yyval.node = mk(nWord, yyvsp[0].keyword, NULL, FALSE); }
+{ yyval.node = mk(nWord, yyvsp[0].keyword, strcmp(yyvsp[0].keyword, "~") == 0 ? yyvsp[0].keyword : NULL, FALSE); }
 break;
 case 56:
 #line 130 "parse.y"

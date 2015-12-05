@@ -126,7 +126,7 @@ first	: comword
 	| first '^' sword		{ $$ = mk(nConcat,$1,$3); }
 
 sword	: comword
-	| keyword			{ $$ = mk(nWord, $1, NULL, FALSE); }
+	| keyword			{ $$ = mk(nWord, $1, strcmp($1, "~") == 0 ? $1 : NULL, FALSE); }
 
 word	: sword
 	| word '^' sword		{ $$ = mk(nConcat,$1,$3); }

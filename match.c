@@ -16,7 +16,7 @@ extern bool match(char *p, char *m, char *s) {
 	while (1) {
 		if (p[i] == '\0')
 			return *s == '\0';
-		else if (m[i]) {
+		else if (m[i] && p[i] != '~') {
 			switch (p[i++]) {
 			case '?':
 				if (*s++ == '\0')
