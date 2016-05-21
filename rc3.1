@@ -1,4 +1,4 @@
-.\" rc.1
+.\" rc3.1
 .\"-------
 .\" Man page portability notes
 .\"
@@ -7,7 +7,7 @@
 .\" nroff.
 .\"
 .\" When you want a \ to appear in the output, use \e in the man page.
-.\" (NOTE this comes up in the rc grammar, where to print out '\n' the
+.\" (NOTE this comes up in the rc3 grammar, where to print out '\n' the
 .\" man page must contain '\en'.)
 .\"
 .\" Evidently not all versions of nroff allow the omission of the
@@ -161,20 +161,21 @@
 .if !"\\$4"" .Xf \\$2 \\$1 "\\$3\\f\\$1\\$4\\*(Xi" "\\$5" "\\$6" "\\$7" "\\$8" "\\$9"
 .if "\\$4"" \\$3\fR\s10
 ..
-.TH RC 1 "2015-05-13"
+.TH RC3 1 "2015-05-13"
 .SH NAME
-rc \- shell
+rc3 \- shell
 .SH SYNOPSIS
-.B rc
+.B rc3
 .RB [ \-deiIlnopsvx ]
 .RB [ \-c
 .IR command ]
 .RI [ arguments ]
 .SH DESCRIPTION
-.I rc
+.I rc3
 is a command interpreter and programming language similar to
 .IR sh (1).
-It is based on the AT&T Plan 9 shell of the same name.
+It is a fork of Byron Rakitzis' rc shell, which is based on the
+AT&T Plan 9 shell of the same name.
 The shell offers a C-like syntax (much more so than the C shell),
 and a powerful mechanism for manipulating variables.
 It is reasonably small and reasonably fast,
@@ -189,12 +190,12 @@ If
 is present, commands are executed from the immediately following
 argument.
 Any further arguments to
-.I rc
+.I rc3
 are placed in
 .Cr $* .
 Thus:
 .Ds
-.Cr "rc -c 'echo $*' 1 2 3"
+.Cr "rc3 -c 'echo $*' 1 2 3"
 .De
 .TP
 \&
@@ -205,47 +206,45 @@ prints out
 .TP
 .Cr \-d
 This flag causes
-.I rc
+.I rc3
 not to ignore
 .Cr SIGQUIT
 or
 .Cr SIGTERM .
 Thus
-.I rc
+.I rc3
 can be made to dump core if sent
 .Cr SIGQUIT .
 This flag is only useful for debugging
-.IR rc .
+.IR rc3 .
 .TP
 .Cr \-e
 If the
 .Cr \-e
 flag is present, then
-.I rc
-will exit if any command fails (exits with non-zero status). However
-.I "rc -e"
-does not exit if a conditional fails. A conditional is the test of an
-.Cr "if ()"
-command, or the left hand side of the
-.Cr ||
-operator.
+.I rc3
+will exit if the exit status of a command is false (nonzero).
+.I "rc3 -e"
+will not exit, however, if a conditional fails, e.g., an
+.Cr if()
+command.
 .TP
 .Cr \-i
 If the
 .Cr \-i
 flag is present or if the input to
-.I rc
+.I rc3
 is from a terminal (as determined by
 .IR isatty (3))
 then
-.I rc
+.I rc3
 will be in
 .I interactive
 mode.
 That is, a prompt (from
 .Cr $prompt(1)\^ )
 will be printed before an input line is taken, and
-.I rc
+.I rc3
 will ignore
 .Cr SIGINT .
 .TP
@@ -253,40 +252,40 @@ will ignore
 If the
 .Cr \-I
 flag is present, or if the input to
-.I rc
+.I rc3
 is not from a terminal, then
-.I rc
+.I rc3
 will not be in interactive mode.
 No prompts will be printed, and
 .Cr SIGINT
 will cause
-.I rc
+.I rc3
 to exit.
 .TP
 .Cr \-l
 If the
 .Cr \-l
 flag is present, or if
-.IR rc 's
+.IR rc3 's
 .Cr argv[0][0]
 is a dash
 .Rc ( \- ),
 then
-.I rc
+.I rc3
 will behave as a login shell.
 That is, it will run commands from
-.Cr $home/.rcrc ,
+.Cr $home/.rc3rc ,
 if this file exists, before reading any other input.
 .TP
 .Cr \-n
 This flag causes
-.I rc
+.I rc3
 to read its input and parse it, but not to execute any commands.
 This is useful for syntax checking on scripts.
 If used in combination with the
 .Cr \-x
 flag,
-.I rc
+.I rc3
 will print each command as it is parsed in a form similar to the one
 used for exporting functions into the environment.
 .TP
@@ -298,39 +297,39 @@ are inherited closed.
 .TP
 .Cr \-p
 This flag prevents
-.I rc
+.I rc3
 from initializing shell functions from the environment.
 This allows
-.I rc
+.I rc3
 to run in a protected mode, whereby it becomes more difficult for
 an
-.I rc
+.I rc3
 script to be subverted by placing false commands in the environment.
 (Note that the presence of this flag does
 .I not
 mean that it is safe to run setuid
-.I rc
+.I rc3
 scripts; the usual caveats about the setuid bit still apply.)
 .TP
 .Cr \-s
 This flag causes
-.I rc
+.I rc3
 to read from standard input.
 Any arguments are placed in
 .Cr $* .
 .TP
 .Cr \-v
 This flag causes
-.I rc
+.I rc3
 to echo its input
 to standard error as it is read.
 .TP
 .Cr \-x
 This flag causes
-.I rc
+.I rc3
 to print every command on standard error before it is executed.
 It can be useful for debugging
-.I rc
+.I rc3
 scripts.
 .PP
 .SH COMMANDS
@@ -385,12 +384,12 @@ terminating each line (except the last) with a backslash
 .Rc ( \e ).
 The backslash-newline sequence is treated as a space.
 A backslash is not otherwise special to
-.IR rc .
+.IR rc3 .
 (In addition,
 inside quotes a backslash loses its special meaning
 even when it is followed by a newline.)
 .SS Quoting
-.IR rc
+.IR rc3
 interprets several characters specially; special characters
 automatically terminate words.
 The following characters are special:
@@ -422,7 +421,7 @@ prints out
 The number sign
 .Rc ( # )
 begins a comment in
-.IR rc .
+.IR rc3 .
 All characters up to but not including the next newline are ignored.
 Note that backslash continuation does not work inside a comment,
 i.e.,
@@ -453,7 +452,7 @@ statement in braces:
 .De
 .PP
 Fortunately,
-.IR rc 's
+.IR rc3 's
 grammar is simple enough that a (confident) user can
 understand it by examining the skeletal
 .IR yacc (1)
@@ -568,7 +567,7 @@ enter it as
 .Cr $$ .
 .PP
 Additionally,
-.I rc
+.I rc3
 supports ``here strings'', which are like here documents,
 except that input is taken directly from a string on the command line.
 Their use is illustrated here:
@@ -577,7 +576,7 @@ Their use is illustrated here:
 .De
 .PP
 (This feature enables
-.I rc
+.I rc3
 to export functions using here documents into the environment;
 the author does not expect users to find this feature useful.)
 .SS Pipes
@@ -622,7 +621,7 @@ It is convenient
 sometimes to build nonlinear pipelines so that a command like
 .I cmp
 can read the output of two other commands at once.
-.I rc
+.I rc3
 does it like this:
 .Ds
 .Cr "cmp <{command} <{command}"
@@ -649,7 +648,7 @@ and the output version of this notation:
 .De
 .SH "CONTROL STRUCTURES"
 The following may be used for control flow in
-.IR rc :
+.IR rc3 :
 .SS "If-Else Statements"
 .PD 0
 .sp
@@ -679,7 +678,7 @@ is taken to be a simple-if:
 .SS "While and For Loops"
 .TP
 .Ci "while (" test ) " cmd"
-.I rc
+.I rc3
 executes the
 .I test
 and performs the command as long as the
@@ -687,7 +686,7 @@ and performs the command as long as the
 is true.
 .TP
 .Ci "for (" var " in " list ) " cmd"
-.I rc
+.I rc3
 sets
 .I var
 to each element of
@@ -698,7 +697,7 @@ If
 .Rc `` in
 .IR list ''
 is omitted, then
-.I rc
+.I rc3
 will set
 .I var
 to each element of
@@ -716,7 +715,7 @@ executable.
 .SS "Switch"
 .TP
 .Ci "switch (" list ") { case" " ..." " }"
-.I rc
+.I rc3
 looks inside the braces after a
 .Cr switch
 for statements beginning with the word
@@ -742,7 +741,7 @@ not against file names.
 command.)
 .SS "Logical Operators"
 There are a number of operators in
-.I rc
+.I rc3
 which depend on the exit status of a command.
 .Ds
 .Cr "command && command"
@@ -763,7 +762,7 @@ the first command exits with a nonzero exit status (``false'' in Unix).
 negates the exit status of a command.
 .SH "PATTERN MATCHING"
 There are two forms of pattern matching in
-.IR rc .
+.IR rc3 .
 One is traditional shell globbing.
 This occurs in matching for file names in argument lists:
 .Ds
@@ -776,11 +775,11 @@ When the characters
 or
 .Cr ?
 occur in an argument or command,
-.I rc
+.I rc3
 looks at the
 argument as a pattern for matching against files.
 (Contrary to the behavior other shells exhibit,
-.I rc
+.I rc3
 will only perform pattern matching if a metacharacter occurs unquoted and
 literally in the input.
 Thus,
@@ -815,9 +814,9 @@ not the caret
 .Rc ( ^ ),
 since the caret already means
 something else in
-.IR rc .
+.IR rc3 .
 .PP
-.I rc
+.I rc3
 also matches patterns against strings with the
 .Cr ~
 command:
@@ -883,7 +882,7 @@ is empty is
 Note that inside a
 .Cr ~
 command
-.I rc
+.I rc3
 does not match patterns against file
 names, so it is not necessary to quote the characters
 .Cr "*" ,
@@ -891,7 +890,7 @@ names, so it is not necessary to quote the characters
 and
 .Cr "?" .
 However,
-.I rc
+.I rc3
 does expand the subject against filenames if it contains
 metacharacters.
 Thus, the command
@@ -917,7 +916,7 @@ For example:
 is true.
 .SH "LISTS AND VARIABLES"
 The primary data structure in
-.IR rc
+.IR rc3
 is the list, which is a sequence of words.
 Parentheses are used to group lists.
 The empty list is represented by
@@ -985,7 +984,7 @@ produces the output
 .Cr foobar
 .De
 .SS "Free Carets"
-.I rc
+.I rc3
 inserts carets (concatenation operators) for free in certain situations,
 in order to save some typing on the user's behalf.
 For
@@ -994,7 +993,7 @@ example, the above example could also be typed in as:
 .Cr "opts=(O g c) files=(malloc alloca) cc \-$opts $files.c"
 .De
 .PP
-.I rc
+.I rc3
 takes care to insert a free caret between the
 .Rc `` \- ''
 and
@@ -1008,7 +1007,7 @@ The rule for free carets is as follows: if
 a word or keyword is immediately
 followed by another word, keyword, dollar-sign or
 backquote, then
-.I rc
+.I rc3
 inserts a caret between them.
 .SS "Variables"
 A list may be assigned to a variable, using the notation:
@@ -1019,7 +1018,7 @@ A list may be assigned to a variable, using the notation:
 The special variable
 .Cr *
 may also be assigned to using this notation;
-.I rc
+.I rc3
 has no
 .B set
 builtin.
@@ -1060,10 +1059,10 @@ assigning the null list to a variable:
 .De
 .PP
 For ``free careting'' to work correctly,
-.I rc
+.I rc3
 must make certain assumptions
 about what characters may appear in a variable name.
-.I rc
+.I rc3
 assumes that a variable name consists only of alphanumeric characters,
 underscore
 .Rc ( \|_\| )
@@ -1130,14 +1129,14 @@ where
 is an integer, is a shorthand for
 .Ci $*( n )\fR.
 Thus,
-.IR rc 's
+.IR rc3 's
 arguments may be referred to as
 .Cr "$1" ,
 .Cr "$2" ,
 and so on.
 .PP
 Note also that the list of subscripts may be given by any of
-.IR rc 's
+.IR rc3 's
 list operations:
 .Ds
 .Cr "$var(\`{awk 'BEGIN{for(i=1;i<=10;i++)print i;exit; }'})"
@@ -1234,10 +1233,10 @@ contains a newline
 as its value.
 .SH "SPECIAL VARIABLES"
 Several variables are known to
-.I rc
+.I rc3
 and are treated specially.
 In the following list, ``default'' indicates that
-.I rc
+.I rc3
 gives the variable a default value on startup; ``no-export'' indicates
 that the variable is never exported; and ``read-only'' indicates that
 an attempt to set the variable will silently have no effect.
@@ -1252,14 +1251,14 @@ and vice-versa.
 If
 .Cr $CDPATH
 is set when
-.I rc
+.I rc3
 is started, its value is imported into
 .Cr $cdpath .
 .Cr $cdpath
 and
 .Cr $path
 are
-.I rc
+.I rc3
 lists;
 .Cr $CDPATH
 and
@@ -1269,7 +1268,7 @@ Only the names spelt in capitals are exported into the environment.
 .TP
 .Cr * " (no-export)"
 The argument list of
-.IR rc .
+.IR rc3 .
 .Cr "$1, $2,"
 etc. are the same as
 .Cr $*(1) ,
@@ -1282,7 +1281,7 @@ The variable
 holds the value of
 .Cr argv[0]
 with which
-.I rc
+.I rc3
 was invoked.
 Additionally,
 .Cr $0
@@ -1308,7 +1307,7 @@ yet.
 .TP
 .Cr bqstatus " (no-export)"
 The exit status of the
-.I rc
+.I rc3
 forked to execute the most recent backquote substitution. Note that, unlike
 .Cr $status ,
 .Cr $bqstatus
@@ -1351,36 +1350,36 @@ begin in a directory other than the current directory.
 .Cr history
 .Cr $history
 contains the name of a file to which commands are appended as
-.I rc
+.I rc3
 reads them.
 This facilitates the use of a stand-alone history program
 (such as
 .IR history (1))
 which parses the contents of the history file and presents them to
-.I rc
+.I rc3
 for reinterpretation.
 If
 .Cr $history
 is not set, then
-.I rc
+.I rc3
 does not append commands to any file.
 .TP
 .Cr home " (alias)"
 The default directory for the builtin
 .B cd
 command, and the directory in which
-.I rc
+.I rc3
 looks to find its initialization file,
-.Cr .rcrc ,
+.Cr .rc3rc ,
 if
-.I rc
+.I rc3
 has been started up as a login shell.
 .TP
 .Cr ifs " (default)"
 The internal field separator, used for splitting up the output of
 backquote commands for digestion as a list. On startup,
-.I rc
-assigns the list containing the characters space, tab, and newline to
+.I rc3
+assigns the list containing only the newline character to
 .Cr $ifs .
 .TP
 .Cr path " (alias)"
@@ -1400,36 +1399,36 @@ This is typically
 On startup,
 .Cr $pid
 is initialized to the numeric process ID of the currently running
-.IR rc .
+.IR rc3 .
 .TP
 .Cr prompt " (default)"
 This variable holds the two prompts (in list form, of course) that
-.I rc
+.I rc3
 prints.
 .Cr $prompt(1)
 is printed before each command is read, and
 .Cr $prompt(2)
 is printed when input is expected to continue on the next
 line.
-.I rc
+.I rc3
 sets
 .Cr $prompt
 to
 .Cr "('; ' '')"
 by default.
 The reason for this is that it enables an
-.I rc
+.I rc3
 user to grab commands from previous lines using a
 mouse, and to present them to
-.I rc
+.I rc3
 for re-interpretation; the semicolon
 prompt is simply ignored by
-.IR rc .
+.IR rs .
 The null
 .Cr $prompt(2)
 also has its
 justification: an
-.I rc
+.I rc3
 script, when typed interactively, will not leave
 .Cr $prompt(2) 's
 on the screen,
@@ -1439,7 +1438,7 @@ being necessary.
 .TP
 .Cr prompt " (function)"
 If this function is defined, then it gets executed every time
-.I rc
+.I rc3
 is about to print
 .Cr "$prompt(1)" .
 .TP
@@ -1468,7 +1467,7 @@ to
 .Cr version " (default)"
 On startup, the first element of this list variable is initialized to
 a string which identifies this version of
-.IR rc .
+.IR rc3 .
 The second element is initialized to a string which can be found by
 .IR ident (1)
 and the
@@ -1476,9 +1475,9 @@ and the
 command of 
 .IR sccs (1).
 .SH FUNCTIONS
-.I rc
+.I rc3
 functions are identical to
-.I rc
+.I rc3
 scripts, except that they are stored
 in memory and are automatically exported into the environment.
 A shell function is declared as:
@@ -1486,7 +1485,7 @@ A shell function is declared as:
 .Cr "fn name { commands }"
 .De
 .PP
-.I rc
+.I rc3
 scans the definition until the close-brace, so the function can
 span more than one line.
 The function definition may be removed by typing
@@ -1517,10 +1516,10 @@ but not
 .Cr "fn l { ls -FC } # WRONG"
 .De
 .SH "INTERRUPTS AND SIGNALS"
-.I rc
+.I rc3
 recognizes a number of signals, and allows the user to define shell
 functions which act as signal handlers.
-.I rc
+.I rc3
 by default traps
 .Cr SIGINT
 when it is in interactive mode.
@@ -1528,7 +1527,7 @@ when it is in interactive mode.
 and
 .Cr SIGTERM
 are ignored, unless
-.I rc
+.I rc3
 has been invoked with the
 .Cr \-d
 flag.
@@ -1538,15 +1537,15 @@ The way to define a signal handler is to
 write a function by the name of the signal in lower case.
 Thus:
 .Ds
-.Cr "fn sighup { echo hangup; rm /tmp/rc$pid.*; exit }"
+.Cr "fn sighup { echo hangup; rm /tmp/rc3$pid.*; exit }"
 .De
 .PP
 In addition to Unix signals,
-.I rc
+.I rc3
 recognizes the artificial signal
 .Cr SIGEXIT
 which occurs as
-.I rc
+.I rc3
 is about to exit.
 .PP
 In order to remove a signal handler's definition,
@@ -1570,11 +1569,11 @@ causes
 .Cr SIGINT
 to be ignored by the shell.
 Only signals that are being ignored are passed on to programs run by
-.IR rc ;
+.IR rc3 ;
 signal functions are not exported.
 .PP
 On System V-based Unix systems,
-.I rc
+.I rc3
 will not allow you to trap
 .Cr SIGCLD .
 .SH "BUILTIN COMMANDS"
@@ -1592,7 +1591,7 @@ they can usually be used as such.
 Reads
 .I file
 as input to
-.IR rc
+.IR rc3
 and executes its contents.
 With a
 .Cr \-i
@@ -1640,7 +1639,7 @@ whereas
 .TP
 \&
 is a non-terminating recursion, which will cause
-.Cr rc
+.Cr rc3
 to exhaust its stack space and (eventually) terminate if it is executed.
 .TP
 \fBcd \fR[\fIdirectory\fR]
@@ -1674,14 +1673,14 @@ This is used for echoing a literal
 Concatenates the elements of
 .I list
 with spaces and feeds the resulting string to
-.I rc
+.I rc3
 for re-scanning.
 This is the only time input is rescanned in
-.IR rc .
+.IR rc3 .
 .TP
 \fBexec \fR[\fIarg ...\fR]
 Replaces
-.I rc
+.I rc3
 with the given command.
 If the exec contains only redirections,
 then these redirections apply to the current shell
@@ -1741,10 +1740,10 @@ To set a soft limit equal to the hard limit:
 .TP
 .B newpgrp
 Puts
-.I rc
+.I rc3
 into a new process group.
 This builtin is useful for making
-.I rc
+.I rc3
 behave like a job-control shell in a hostile environment.
 One example is the NeXT Terminal program, which implicitly assumes
 that each shell it forks will put itself into a new process group.
@@ -1794,12 +1793,12 @@ If no argument is present, the current mask value is printed.
 Waits for process with the specified
 .IR pid ,
 which must have been started by
-.IR rc ,
+.IR rc3 ,
 to exit.
 If no
 .I pid
 is specified,
-.I rc
+.I rc3
 waits for all its child processes to exit.
 .TP
 \fBwhatis \fR[\fB\-b\fR] \fR[\fB\-f\fR] \fR[\fB\-p\fR] \fR[\fB\-s\fR] \fR[\fB\-v\fR] [\fB\-\|\-\fR] [\fIname ...\fR]
@@ -1815,7 +1814,7 @@ programs, signal handlers, and variables, respectively.
 If no
 .IR name s
 are specified,
-.I rc
+.I rc3
 lists all objects of that type.
 (This is not permitted for
 .Cr \-p .)
@@ -1829,21 +1828,21 @@ and prints the values of all shell variables and functions.
 Note that
 .B whatis
 output is suitable for input to
-.IR rc ;
+.IR rc3 ;
 by saving the output of
 .B whatis
 in a file, it should be possible to recreate the state of
-.I rc
+.I rc3
 by sourcing this file with a
 .Cr .
 command.
 Another note:
 .Cr "whatis -s > file"
 cannot be used to store the state of
-.IR rc 's
+.IR rc3 's
 signal handlers in a file, because builtins with redirections
 are run in a subshell, and
-.I rc
+.I rc3
 always restores signal handlers to their default value after a
 .Cr fork() .
 .TP
@@ -1913,23 +1912,23 @@ prints (with no final newline)
 .De
 .SH "EXIT STATUS"
 The exit status of
-.I rc
+.I rc3
 is normally the same as that of the last command executed.
 If the
 last command was a pipeline,
-.I rc
+.I rc3
 exits
 .Cr 0
 if every command in the pipeline did; otherwise it exits
 .Cr 1 .
 .PP
-.I rc
+.I rc3
 can be made to exit with a particular status using the
 .B exit
 builtin.
 .SH GRAMMAR
 Here is
-.IR rc 's
+.IR rc3 's
 grammar, edited to remove semantic actions.
 .Ds
 .ft \*(Cf
@@ -2031,8 +2030,8 @@ optnl: /* empty */ | optnl '\en'
 .ft R
 .De
 .SH FILES
-.Cr $HOME/.rcrc ,
-.Cr /tmp/rc* ,
+.Cr $HOME/.rc3rc ,
+.Cr /tmp/rc3* ,
 .Cr /dev/null
 .SH CREDITS
 .I rc
@@ -2058,11 +2057,11 @@ or
 style redirection is implemented that way.
 However, on older systems it is implemented with named pipes.
 Allegedly, it is sometimes possible to foil
-.I rc
+.I rc3
 into removing the FIFO it places in
 .Cr /tmp
 prematurely, or it is even possible to cause
-.I rc
+.I rc3
 to hang.
 (The current maintainer has never seen this, but then he
 doesn't use systems which lack
@@ -2074,7 +2073,7 @@ The
 .B echo
 command does not need to be a builtin. It is one for reasons of
 performance and portability (of
-.I rc
+.I rc3
 scripts).
 .PP
 There should be a way to avoid exporting a variable.

@@ -4,7 +4,7 @@
 
 #include <assert.h>
 
-#define RC "rc: "
+#define RC "rc3: "
 
 /* datatypes */
 

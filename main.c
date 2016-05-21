@@ -98,7 +98,7 @@ quitopts:
 		char *rcrc;
 		int fd;
 
-		rcrc = concat(varlookup("home"), word("/.rcrc", NULL))->w;
+		rcrc = concat(varlookup("home"), word("/.rc3rc", NULL))->w;
 		fd = rc_open(rcrc, rFrom);
 		if (fd == -1) {
 			if (errno != ENOENT)

@@ -25,7 +25,7 @@ void *edit_begin(int fd) {
 		f = stdin;
 	else
 		f = fdopen(fd, "r");
-	c->el = el_init("rc", f, stdout, stderr);
+	c->el = el_init("rc3", f, stdout, stderr);
 	el_set(c->el, EL_SIGNAL, 0);
 	el_source(c->el, NULL);
 

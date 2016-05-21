@@ -138,7 +138,7 @@ void *edit_begin(int fd) {
 	rl_catch_signals = 0;
 	rl_completer_quote_characters = "'";
 	rl_filename_quote_characters = "\t\n !#$&'()*;<=>?@[\\]^`{|}~";
-	rl_readline_name = "rc";
+	rl_readline_name = "rc3";
 
 	rl_add_defun("complete-command",  rc_complete_command,  META('!'));
 	rl_add_defun("complete-filename", rc_complete_filename, META('/'));

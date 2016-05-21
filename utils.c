@@ -35,7 +35,7 @@ extern void uerror(char *s) {
 
 /* Die horribly. This should never get called. Please let me know if it does. */
 
-#define PANICMSG "rc panic: "
+#define PANICMSG "rc3 panic: "
 
 extern void panic(char *s) {
 	write(2, PANICMSG, conststrlen(PANICMSG));

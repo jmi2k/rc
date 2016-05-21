@@ -1,5 +1,5 @@
 dnl Our package name, version, ...
-AC_INIT([rc], [1.7.4])
+AC_INIT([rc3], [1.7.4])
 
 dnl ... and release date
 DESCRIPTION=$(git describe || echo '(git description unavailable)')
