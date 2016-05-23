@@ -2106,6 +2106,36 @@ single occurrence.
 Bug reports should be mailed to
 .Cr "<toby@paccrat.org>" .
 .SH INCOMPATIBILITIES
+Here is a list of features which distinguish
+.I rc3
+from Byron Rakitzis'
+.I rc
+shell:
+.PP
+.I rc3
+does tilde expansion like most other shells (e.g.
+.IR bash (1),
+.IR mksh (1),
+.IR zsh (1)).
+.PP
+.I rc3
+accepts unquoted equals signs in the arguments of simple commands.
+.PP
+On startup, Rakitzis'
+.I rc
+assigns the list containing the characters space, tab, and newline to
+.Cr $ifs ,
+.I rc3
+assigns only the newline character.
+.PP
+In Rakitzis'
+.I rc
+the
+.B break
+and
+.B return 
+keywords do not work from within local variable blocks.
+.PP
 Here is a list of features which distinguish this incarnation of
 .I rc
 from the one described in the Bell Labs manual pages:
