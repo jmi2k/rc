@@ -57,28 +57,37 @@ extern void setpipestatus(int stats[], int num) {
 /* set a simple status, as opposed to a pipeline */
 
 extern void setstatus(pid_t pid, int i) {
+	setstatus_cmd(pid, NULL, i);
+}
+
+extern void setstatus_cmd(pid_t pid, char *cmd, int i) {
 	pipelength = 1;
 	statuses[0] = i;
-	statprint(pid, i);
+	statprint_cmd(pid, cmd, i);
 }
 
 /* print a message if termination was with a signal, and if the child dumped core. exit on error if -e is set */
 
 extern void statprint(pid_t pid, int i) {
+	statprint_cmd(pid, NULL, i);
+}
+
+extern void statprint_cmd(pid_t pid, char *cmd, int i) {
 	if (WIFSIGNALED(i)) {
 		int t = WTERMSIG(i);
-		char *msg = ((t > 0) && (t < NUMOFSIGNALS) ? signals[WTERMSIG(i)].msg : "");
+		char *msg = ((t > 0) && (t < NUMOFSIGNALS) ? signals[t].msg : "signaled");
 		if (pid != -1)
 			fprint(2, "%ld: ", (long)pid);
-		if (myWIFDUMPED(i)) {
-			if (*msg == '\0')
-				fprint(2, "core dumped\n");
-			else
-				fprint(2, "%s--core dumped\n", msg);
-		} else if (*msg != '\0')
-			fprint(2, "%s\n", msg);
-	}
-	if (i != 0 && dashee && !cond)
+		fprint(2, "%s%s", msg, myWIFDUMPED(i) ? "--core dumped" : "");
+	} else if (pid > 0 && WIFEXITED(i)) {
+		fprint(2, "%ld: exited (%d)", pid, WEXITSTATUS(i));
+	} else
+		goto end;
+	if (cmd != NULL)
+		fprint(2, "\t{%s}\n", cmd);
+	else
+		fprint(2, "\n");
+end: if (i != 0 && dashee && !cond)
 		rc_exit(getstatus());
 }
 

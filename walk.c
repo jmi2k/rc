@@ -46,7 +46,7 @@ top:	sigchk();
 		/* WALK doesn't fall through */
 	case nNowait: {
 		int pid;
-		if ((pid = rc_fork()) == 0) {
+		if ((pid = rc_fork_cmd(mprint("%T", n->u[0].p))) == 0) {
 #if defined(RC_JOB) && defined(SIGTTOU) && defined(SIGTTIN) && defined(SIGTSTP)
 			setsigdefaults(FALSE);
 			rc_signal(SIGTTOU, SIG_IGN);	/* Berkeleyized version: put it in a new pgroup. */

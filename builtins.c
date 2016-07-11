@@ -254,6 +254,7 @@ extern void b_builtin(char **ignore) {
 static void b_wait(char **av) {
 	int status;
 	pid_t pid;
+	char *cmd;
 	if (av[1] == NULL) {
 		waitforall();
 		return;
@@ -266,9 +267,10 @@ static void b_wait(char **av) {
 		badnum(av[1]);
 		return;
 	}
-	if (rc_wait4(pid, &status, FALSE) > 0)
-		setstatus(pid, status);
-	else
+	if (rc_wait4_cmd(pid, &cmd, &status, FALSE) > 0) {
+		setstatus_cmd(pid, cmd, status);
+		efree(cmd);
+	} else
 		set(FALSE);
 	sigchk();
 }

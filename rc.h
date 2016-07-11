@@ -349,9 +349,11 @@ extern int istrue(void);
 extern int getstatus(void);
 extern void set(bool);
 extern void setstatus(pid_t, int);
+extern void setstatus_cmd(pid_t, char *, int);
 extern List *sgetstatus(void);
 extern void setpipestatus(int [], int);
 extern void statprint(pid_t, int);
+extern void statprint_cmd(pid_t, char *, int);
 extern void ssetstatus(char **);
 extern char *strstatus(int s);
 
@@ -389,7 +391,9 @@ extern void applylocale(void);
 
 /* wait.c */
 extern pid_t rc_fork(void);
+extern pid_t rc_fork_cmd(char *);
 extern pid_t rc_wait4(pid_t, int *, bool);
+extern pid_t rc_wait4_cmd(pid_t, char **, int *, bool);
 extern List *sgetapids(void);
 extern void waitforall(void);
 extern bool forked;

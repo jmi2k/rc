@@ -10,36 +10,41 @@ typedef struct Pid Pid;
 
 static struct Pid {
 	pid_t pid;
+	char *cmd;
 	int stat;
 	bool alive;
 	Pid *n;
 } *plist = NULL;
 
 extern pid_t rc_fork() {
+	return rc_fork_cmd(NULL);
+}
+
+extern pid_t rc_fork_cmd(char *cmd) {
 	Pid *new;
 	struct Pid *p, *q;
 	pid_t pid = fork();
 
 	switch (pid) {
 	case -1:
+		efree(cmd);
 		uerror("fork");
 		rc_error(NULL);
 		/* NOTREACHED */
 	case 0:
 		forked = TRUE;
 		sigchk();
-		p = plist; q = 0;
-		while (p) {
-			if (q) efree(q);
-			q = p;
-			p = p->n;
+		for (p = plist; p; p = q) {
+			q = p->n;
+			efree(p->cmd);
+			efree(p);
 		}
-		if (q) efree(q);
 		plist = 0;
 		return 0;
 	default:
 		new = enew(Pid);
 		new->pid = pid;
+		new->cmd = cmd;
 		new->alive = TRUE;
 		new->n = plist;
 		plist = new;
@@ -48,6 +53,13 @@ extern pid_t rc_fork() {
 }
 
 extern pid_t rc_wait4(pid_t pid, int *stat, bool nointr) {
+	char *cmd;
+	if ((pid = rc_wait4_cmd(pid, &cmd, stat, nointr)) > 0)
+		efree(cmd);
+	return pid;
+}
+
+extern pid_t rc_wait4_cmd(pid_t pid, char **cmd, int *stat, bool nointr) {
 	Pid *r, *prev;
 
 	/* Find the child on the list. */
@@ -91,6 +103,7 @@ extern pid_t rc_wait4(pid_t pid, int *stat, bool nointr) {
 		plist = r->n; /* remove element from head of list */
 	else
 		prev->n = r->n;
+	*cmd = r->cmd;
 	efree(r);
 	return pid;
 }
@@ -113,12 +126,14 @@ extern List *sgetapids() {
 
 extern void waitforall() {
 	int stat;
+	char *cmd;
 
 	while (plist != NULL) {
-		pid_t pid = rc_wait4(plist->pid, &stat, FALSE);
-		if (pid > 0)
-			setstatus(pid, stat);
-		else {
+		pid_t pid = rc_wait4_cmd(plist->pid, &cmd, &stat, FALSE);
+		if (pid > 0) {
+			setstatus_cmd(pid, cmd, stat);
+			efree(cmd);
+		} else {
 			set(FALSE);
 			if (errno == EINTR)
 				return;
